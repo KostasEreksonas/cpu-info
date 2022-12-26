@@ -1,6 +1,6 @@
 #!/bin/sh
 
-function model() {
+function getModel() {
 	count=$(grep model\ name /proc/cpuinfo | head -1 | wc -w);
 	for (( i = 3; i < $count; i++ )); do
 		name=$(grep model\ name /proc/cpuinfo | head -1 | cut -d " " -f $i)
@@ -9,7 +9,7 @@ function model() {
 	printf "\n"
 }
 
-function flags() {
+function getFlags() {
 	flagcount=$(grep flags /proc/cpuinfo | head -1 | wc -w)
 	printf "\t"
 	for (( i = 2; i < $flagcount; i++ )); do
@@ -18,7 +18,7 @@ function flags() {
 	done
 }
 
-function frequencies() {
+function getFrequencies() {
 	for (( core = 1; core <= $1; core++ )); do
 		counter=$((counter+1))
 		eval "echo "Thread $counter frequency: \
@@ -34,13 +34,13 @@ id=$(grep vendor_id /proc/cpuinfo | cut -d " " -f 2 | head -1)
 stepping=$(grep stepping /proc/cpuinfo | head -1 | cut -d " " -f 2)
 family=$(grep family /proc/cpuinfo | head -1 | cut -d " " -f 3)
 
-printf "CPU model: $(model)\n\
+printf "CPU model: $(getModel)\n\
 CPU family: $family\n\
 Core count: $cores\n\
 Thread count: $threads\n\
 Cache size: $cache KB\n\
 Vendor ID: $id\n\
 Stepping: $stepping\n\
-$(frequencies $threads)\n\
+$(getFrequencies $threads)\n\
 CPU flags:\n\
-$(flags)\n"
+$(getFlags)\n"
